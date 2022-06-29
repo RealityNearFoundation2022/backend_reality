@@ -1,6 +1,7 @@
-from .crud_item import item
-from .crud_user import user
-
+from .crud_item    import item
+from .crud_user    import user
+from .crud_contact import contact
+from .crud_report  import report
 # For a new basic set of CRUD operations you could just do
 
 # from .base import CRUDBase
