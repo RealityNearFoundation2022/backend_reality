@@ -9,60 +9,46 @@ from app.api import deps
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas.Item])
-def read_items(
+@router.get("/", response_model=List[schemas.Configuration])
+def read_configuration(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
-    Retrieve items.
+    Retrieve configurations.
     """
     if crud.user.is_superuser(current_user):
-        items = crud.item.get_multi(db, skip=skip, limit=limit)
+        configurations = crud.configuration.get_multi(db, skip=skip, limit=limit)
     else:
-        items = crud.item.get_multi_by_owner(
+        configurations = crud.configuration.get_multi_by_owner(
             db=db, owner_id=current_user.id, skip=skip, limit=limit
         )
-    return items
+    return configurations
 
 
-@router.post("/", response_model=schemas.Item)
-def create_item(
-    *,
-    db: Session = Depends(deps.get_db),
-    item_in: schemas.ItemCreate,
-    current_user: models.User = Depends(deps.get_current_active_user),
-) -> Any:
-    """
-    Create new item.
-    """
-    item = crud.item.create_with_owner(db=db, obj_in=item_in, owner_id=current_user.id)
-    return item
-
-
-@router.put("/{id}", response_model=schemas.Item)
-def update_item(
+@router.put("/{id}", response_model=schemas.Configuration)
+def update_configuration(
     *,
     db: Session = Depends(deps.get_db),
     id: int,
-    item_in: schemas.ItemUpdate,
+    configuration_in: schemas.ConfigurationUpdate,
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
-    Update an item.
+    Update an configuration.
     """
-    item = crud.item.get(db=db, id=id)
-    if not item:
-        raise HTTPException(status_code=404, detail="Item not found")
-    if not crud.user.is_superuser(current_user) and (item.owner_id != current_user.id):
+    configuration = crud.configuration.get(db=db, id=id)
+    if not configuration:
+        raise HTTPException(status_code=404, detail="Configuration not found")
+    if not crud.user.is_superuser(current_user) and (configuration.owner_id != current_user.id):
         raise HTTPException(status_code=400, detail="Not enough permissions")
-    item = crud.item.update(db=db, db_obj=item, obj_in=item_in)
-    return item
+    configuration = crud.configuration.update(db=db, db_obj=configuration, obj_in=configuration_in)
+    return configuration
 
 
-@router.get("/{id}", response_model=schemas.Item)
+@router.get("/{id}", response_model=schemas.Configuration)
 def read_item(
     *,
     db: Session = Depends(deps.get_db),
@@ -70,7 +56,7 @@ def read_item(
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
-    Get item by ID.
+    Get Configuration by ID.
     """
     item = crud.item.get(db=db, id=id)
     if not item:
@@ -79,21 +65,3 @@ def read_item(
         raise HTTPException(status_code=400, detail="Not enough permissions")
     return item
 
-
-@router.delete("/{id}", response_model=schemas.Item)
-def delete_item(
-    *,
-    db: Session = Depends(deps.get_db),
-    id: int,
-    current_user: models.User = Depends(deps.get_current_active_user),
-) -> Any:
-    """
-    Delete an item.
-    """
-    item = crud.item.get(db=db, id=id)
-    if not item:
-        raise HTTPException(status_code=404, detail="Item not found")
-    if not crud.user.is_superuser(current_user) and (item.owner_id != current_user.id):
-        raise HTTPException(status_code=400, detail="Not enough permissions")
-    item = crud.item.remove(db=db, id=id)
-    return item

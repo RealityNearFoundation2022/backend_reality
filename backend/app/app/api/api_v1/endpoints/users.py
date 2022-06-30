@@ -48,6 +48,8 @@ def create_user(
         send_new_account_email(
             email_to=user_in.email, username=user_in.email, password=user_in.password
         )
+    configuration_in = schemas.ConfigurationCreate(location_enabled=0)
+    configuration = crud.configuration.create(db, obj_in=configuration_in)
     return user
 
 
@@ -110,6 +112,9 @@ def create_user_open(
         )
     user_in = schemas.UserCreate(password=password, email=email, full_name=full_name)
     user = crud.user.create(db, obj_in=user_in)
+
+    configuration_in = schemas.ConfigurationCreate(location_enabled=0, owner_id=user.id)
+    configuration = crud.configuration.create(db, obj_in=configuration_in)
     return user
 
 

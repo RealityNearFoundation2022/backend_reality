@@ -11,4 +11,4 @@ api_router.include_router(contacts.router, prefix="/contacts", tags=["contacts"]
 #api_router.include_router(location.router, prefix="/location", tags=["location"])
 #api_router.include_router(notifications.router, prefix="/notifications", tags=["notifications"])
 api_router.include_router(reports.router, prefix="/reports", tags=["reports"])
-#api_router.include_router(configuration.router, prefix="/configuration", tags=["configuration"])
+api_router.include_router(configuration.router, prefix="/configuration", tags=["configuration"])
