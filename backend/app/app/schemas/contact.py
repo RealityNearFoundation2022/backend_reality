@@ -14,8 +14,8 @@ class ContactCreate(ContactBase):
 
 
 # Properties to receive on Contact update
-class ContactUpdate(ContactBase):
-    pass
+class ContactUpdate(BaseModel):
+    aproved: int
 
 
 # Properties shared by models stored in DB
