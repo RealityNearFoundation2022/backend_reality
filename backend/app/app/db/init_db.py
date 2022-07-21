@@ -23,3 +23,10 @@ def init_db(db: Session) -> None:
             is_superuser=True,
         )
         user = crud.user.create(db, obj_in=user_in)  # noqa: F841
+
+        configuration_in = schemas.ConfigurationCreate(
+            location_enabled=0,
+            owner_id=user.id
+        )
+
+        configuration = crud.configuration.create(db, obj_in=configuration_in) # noqa: F841

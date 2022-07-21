@@ -18,7 +18,7 @@ def read_users(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+    current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Retrieve users.
@@ -48,6 +48,8 @@ def create_user(
         send_new_account_email(
             email_to=user_in.email, username=user_in.email, password=user_in.password
         )
+    configuration_in = schemas.ConfigurationCreate(location_enabled=0)
+    configuration = crud.configuration.create(db, obj_in=configuration_in)
     return user
 
 
@@ -110,6 +112,9 @@ def create_user_open(
         )
     user_in = schemas.UserCreate(password=password, email=email, full_name=full_name)
     user = crud.user.create(db, obj_in=user_in)
+
+    configuration_in = schemas.ConfigurationCreate(location_enabled=0, owner_id=user.id)
+    configuration = crud.configuration.create(db, obj_in=configuration_in)
     return user
 
 
@@ -125,10 +130,10 @@ def read_user_by_id(
     user = crud.user.get(db, id=user_id)
     if user == current_user:
         return user
-    if not crud.user.is_superuser(current_user):
-        raise HTTPException(
-            status_code=400, detail="The user doesn't have enough privileges"
-        )
+    #if not crud.user.is_superuser(current_user):
+    #    raise HTTPException(
+    #        status_code=400, detail="The user doesn't have enough privileges"
+    #    ) 
     return user
 
 
