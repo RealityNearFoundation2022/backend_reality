@@ -5,18 +5,20 @@ from pydantic import BaseModel
 
 # Shared properties
 class ContactBase(BaseModel):
-    pending: int
+    pending: int = 0 # 0 = pending | 1 = aproved
     contact_id: int
+    locked: int 
 
 # Properties to receive on Contact creation
-class ContactCreate(ContactBase):
-    pass
-
+class ContactCreate(BaseModel):
+    contact_id: int
 
 # Properties to receive on Contact update
 class ContactUpdate(BaseModel):
-    aproved: int
+    approved: int
 
+class ContactLocked(BaseModel):
+    locked: int
 
 # Properties shared by models stored in DB
 class ContactInDBBase(ContactBase):
@@ -24,6 +26,7 @@ class ContactInDBBase(ContactBase):
     pending: int
     contact_id: int
     owner_id: int
+    locked: int
 
     class Config:
         orm_mode = True

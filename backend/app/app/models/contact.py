@@ -17,4 +17,5 @@ class Contact(Base):
     owner_id = Column(Integer, ForeignKey("user.id"))
     contact_id = Column(Integer)
     owner = relationship("User", back_populates="contacts")
+    locked = Column(Integer, default=0)
     __table_args__ = (UniqueConstraint('owner_id', 'contact_id', name='_owner_contact_uc'),)
