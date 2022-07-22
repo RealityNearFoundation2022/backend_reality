@@ -6,3 +6,4 @@ from .contact import Contact, ContactCreate, ContactInDB, ContactUpdate, Contact
 from .report import Report, ReportCreate, ReportInDB, ReportUpdate
 from .configuration import Configuration, ConfigurationCreate, ConfigurationInDB, ConfigurationUpdate
 from .notification import Notification, NotificationCreate, NotificationInDB, NotificationUpdate
+from .location import Location, LocationCreate, LocationInDB, LocationUpdate

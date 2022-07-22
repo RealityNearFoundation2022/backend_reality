@@ -4,6 +4,7 @@ from .crud_contact import contact
 from .crud_report  import report
 from .crud_configuration import configuration
 from .crud_notification import notification
+from .crud_location import location
 # For a new basic set of CRUD operations you could just do
 
 # from .base import CRUDBase
