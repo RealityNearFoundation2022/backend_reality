@@ -30,7 +30,7 @@ class CRUDLocation(CRUDBase[Location, LocationCreate, LocationUpdate]):
             .all()
         )
 
-    def get_last(self, db: Session, owner_id: int) -> Location:
-        return db.query(self.model).filter(Location.owner_id == owner_id).first()
+    # def get_last(self, db: Session, owner_id: int) -> Location:
+    #     return db.query(self.model).filter(Location.owner_id == owner_id).first()
 
 location = CRUDLocation(Location)
