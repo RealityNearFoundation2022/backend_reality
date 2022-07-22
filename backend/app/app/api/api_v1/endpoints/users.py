@@ -50,6 +50,14 @@ def create_user(
         )
     configuration_in = schemas.ConfigurationCreate(location_enabled=0)
     configuration = crud.configuration.create(db, obj_in=configuration_in)
+
+    location_in = schemas.LocationCreate(
+        lat = 0,
+        lng = 0
+    )
+
+    location = crud.location.create(db, obj_in=location_in)
+
     return user
 
 
@@ -115,6 +123,15 @@ def create_user_open(
 
     configuration_in = schemas.ConfigurationCreate(location_enabled=0, owner_id=user.id)
     configuration = crud.configuration.create(db, obj_in=configuration_in)
+
+    location_in = schemas.LocationCreate(
+        lat = 0,
+        lng = 0,
+        owner_id = user.id
+    )
+
+    location = crud.location.create(db, obj_in=location_in)
+
     return user
 
 

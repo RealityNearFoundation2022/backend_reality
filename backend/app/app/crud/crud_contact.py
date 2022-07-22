@@ -7,7 +7,7 @@ from app.crud.base import CRUDBase
 from app.models.contact import Contact
 from app.schemas.contact import ContactCreate, ContactUpdate
 
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 
 
 class CRUDContact(CRUDBase[Contact, ContactCreate, ContactUpdate]):
@@ -79,13 +79,38 @@ class CRUDContact(CRUDBase[Contact, ContactCreate, ContactUpdate]):
                     Contact.owner_id == owner_id, 
                     Contact.contact_id == owner_id
                 ),
-                # 0 = pending  
+                # 1 = accepted  
                 Contact.pending == 1
             )
             .offset(skip)
             .limit(limit)
             .all()
         )
+
+    def get_by_owner_and_contact(
+        self, db: Session, *, owner_id: int, contact_id: int
+    ) -> Contact:
+
+        opt1 = db.query(self.model).filter(
+            and_(
+                Contact.owner_id == owner_id,
+                Contact.contact_id == contact_id,
+                Contact.pending == 1 # accepted
+            )
+        ).first()
+
+        if opt1:
+            return opt1
+
+        opt2 = db.query(self.model).filter(
+            and_(
+                Contact.owner_id == contact_id,
+                Contact.contact_id == owner_id,
+                Contact.pending == 1 # accepted
+            )
+        ).first()
+
+        return opt2
     
     def update_pending(
         self,
