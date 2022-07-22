@@ -5,8 +5,8 @@ from pydantic import BaseModel
 
 # Shared properties
 class LocationBase(BaseModel):
-    location_enabled: int
-
+    lng: int
+    lat: int
 
 # Properties to receive on Location creation
 class LocationCreate(LocationBase):
@@ -21,7 +21,8 @@ class LocationUpdate(LocationBase):
 # Properties shared by models stored in DB
 class LocationInDBBase(LocationBase):
     id: int
-    location_enabled: int
+    lng: int
+    lat: int
     owner_id: int
 
     class Config:
