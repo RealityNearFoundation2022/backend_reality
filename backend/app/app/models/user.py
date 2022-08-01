@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, Column, Integer, String
+from datetime import datetime
+from sqlalchemy import Boolean, Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
@@ -27,3 +28,6 @@ class User(Base):
     configurations = relationship("Configuration", back_populates="owner")
     notifications = relationship("Notification", back_populates="owner")
     reports = relationship("Report", back_populates="owner")
+
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
