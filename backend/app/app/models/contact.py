@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, ForeignKey, Integer
+from datetime import datetime
+from sqlalchemy import Column, ForeignKey, Integer, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.schema import UniqueConstraint
 from sqlalchemy.ext.declarative import declared_attr
@@ -18,4 +19,8 @@ class Contact(Base):
     contact_id = Column(Integer)
     owner = relationship("User", back_populates="contacts")
     locked = Column(Integer, default=0)
+
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
+
     __table_args__ = (UniqueConstraint('owner_id', 'contact_id', name='_owner_contact_uc'),)
