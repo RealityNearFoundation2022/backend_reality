@@ -30,8 +30,8 @@ class MutableDict(Mutable, dict):
 
 from typing import TYPE_CHECKING
 
-
-from sqlalchemy import Column, ForeignKey, Integer, String
+from datetime import datetime
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 
 from sqlalchemy.types import TypeDecorator, VARCHAR
@@ -70,3 +70,6 @@ class Notification(Base):
     data = Column(MutableDict.as_mutable(JSONEncodedDict))
     owner_id = Column(Integer, ForeignKey("user.id"))
     owner = relationship("User", back_populates="notifications")
+
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())

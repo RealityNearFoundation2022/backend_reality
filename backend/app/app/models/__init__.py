@@ -5,4 +5,4 @@ from .location      import Location
 from .notification  import Notification
 from .report        import Report
 from .configuration import Configuration
-
+from .coupon       import Coupon, Asset, CouponAssigned
