@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, ForeignKey, Integer
+from datetime import datetime
+from sqlalchemy import Column, ForeignKey, Integer, DateTime
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
@@ -15,3 +16,5 @@ class Location(Base):
     lat = Column(Integer, default=0)
     owner_id = Column(Integer, ForeignKey("user.id"))
     owner = relationship("User", back_populates="locations")
+
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())

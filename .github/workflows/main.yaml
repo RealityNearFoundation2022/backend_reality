@@ -1,0 +1,35 @@
+name: Merge to master
+on: 
+  push:
+    branches:
+      - master
+jobs:
+  labelWhenApproved:
+    runs-on: ubuntu-latest
+    name: Label when approved
+    steps:
+    - name: Label when approved
+      uses: appleboy/ssh-action@master
+      env: 
+        VUE_APP_ENV: "production"
+        TAG: "prod"
+        FRONTEND_ENV: "production"
+        DOMAIN: "api.realitynear.org"
+        TRAEFIK_TAG: "realitynear.org"
+        STACK_NAME: "realitynear-org"
+        
+      with:
+        host: ${{ secrets.PROD_HOST }}
+        username: ${{ secrets.PROD_USERNAME }}
+        password: ${{ secrets.PROD_PASSWORD }}
+        envs: VUE_APP_ENV,TAG,FRONTEND_ENV,DOMAIN,TRAEFIK_TAG,STACK_NAME
+        script: |
+          cd reality/
+          git pull origin master
+          docker stack rm $STACK_NAME
+          VUE_APP_ENV=$VUE_APP_ENV TAG=$TAG FRONTEND_ENV=$FRONTEND_ENV bash ./scripts/build.sh
+          echo 'sleep'
+          sleep 50
+          echo 'end sleep'
+          DOMAIN=$DOMAIN TRAEFIK_TAG=$TRAEFIK_TAG STACK_NAME=$STACK_NAME TAG=$TAG VUE_APP_ENV=$VUE_APP_ENV bash ./scripts/deploy.sh
+        ADD_LABEL: "approved"
