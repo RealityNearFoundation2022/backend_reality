@@ -130,6 +130,7 @@ def update_user_me(
     password: str = Body(None),
     full_name: str = Body(None),
     email: EmailStr = Body(None),
+    avatar: str = Body(None),
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
@@ -143,6 +144,8 @@ def update_user_me(
         user_in.full_name = full_name
     if email is not None:
         user_in.email = email
+    if avatar is not None:
+        user_in.avatar = avatar
     user = crud.user.update(db, db_obj=current_user, obj_in=user_in)
     return user
 
@@ -165,6 +168,7 @@ def create_user_open(
     password: str = Body(...),
     email: EmailStr = Body(...),
     full_name: str = Body(None),
+    avatar: str = Body(None),
 ) -> Any:
     """
     Create new user without the need to be logged in.
@@ -180,7 +184,7 @@ def create_user_open(
             status_code=400,
             detail="The user with this username already exists in the system",
         )
-    user_in = schemas.UserCreate(password=password, email=email, full_name=full_name)
+    user_in = schemas.UserCreate(password=password, email=email, full_name=full_name, avatar=avatar)
     user = crud.user.create(db, obj_in=user_in)
 
     configuration_in = schemas.ConfigurationCreate(location_enabled=0, owner_id=user.id)
