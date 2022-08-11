@@ -139,6 +139,8 @@ services:
   
   backend:
     image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
+    volumes:
+      - ./backend/app/static:/app/static/
     depends_on:
       - db
     env_file:
