@@ -11,6 +11,7 @@ class UserBase(BaseModel):
     is_superuser: bool = False
     full_name: Optional[str] = None
     path: Optional[str] = None
+    avatar: Optional[str] = None
 #    reports: Optional[str] = None
 
 
