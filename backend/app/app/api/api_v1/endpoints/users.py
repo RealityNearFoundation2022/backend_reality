@@ -1,9 +1,12 @@
 from typing import Any, List
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException, File, UploadFile
 from fastapi.encoders import jsonable_encoder
 from pydantic.networks import EmailStr
 from sqlalchemy.orm import Session
+from uuid import uuid4
+
+import os
 
 from app import crud, models, schemas
 from app.api import deps
@@ -11,6 +14,65 @@ from app.core.config import settings
 from app.utils import send_new_account_email
 
 router = APIRouter()
+
+
+
+
+
+@router.patch("/image", response_model=schemas.User)
+async def upload_image_user(
+    *,
+    db: Session = Depends(deps.get_db),
+    file: UploadFile = File(...),
+    current_user: models.User = Depends(deps.get_current_active_user)
+    ) -> Any:
+    """
+    Update image of user.
+    """
+    user = crud.user.get(db=db, id=current_user.id)
+    #if not user:
+    #print(file.filename)
+    #print(file.write(bytes))
+    #print(file.read(bytes))
+    contents = file.file.read()
+
+    # print(contents)
+    extension = os.path.splitext(file.filename)[1]
+
+    #print(extension)
+
+    # print(extension != ".jpg")
+
+    if extension != ".jpg" and extension != ".png":
+        raise HTTPException(
+            status_code=400,
+            detail="The extension must be jpg or png",
+        )
+
+    compress_file = '{}{}'.format(uuid4(), extension)  
+
+    with open('./static/' + compress_file, 'wb') as image:
+        image.write(contents)
+        image.close()
+
+    path = '/api/v1/static/' + compress_file
+
+    print(user.__dict__)
+
+    user_in = schemas.UserUpdate(
+        email = user.email,
+        is_active = user.is_active,
+        is_superuser= user.is_superuser,
+        full_name= user.full_name,
+        path=path,
+        password=""
+    )
+
+    user = crud.user.update(db, db_obj=user, obj_in=user_in)
+
+    # update user data with path
+
+    return user
 
 
 @router.get("/", response_model=List[schemas.User])

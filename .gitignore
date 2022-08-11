@@ -1,3 +1,5 @@
 .vscode
 .mypy_cache
 docker-stack.yml
+./backend/app/static/*.png
+./backend/app/static/*.jpg

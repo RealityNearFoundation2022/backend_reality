@@ -158,8 +158,6 @@ def read_coupon(
     coupon = crud.coupon.get(db=db, id=id)
     if not coupon:
         raise HTTPException(status_code=404, detail="Coupon not found")
-    if not crud.user.is_superuser(current_user) and (coupon.owner_id != current_user.id):
-        raise HTTPException(status_code=400, detail="Not enough permissions")
     return coupon
 
 
