@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from .configuration import Configuration  # noqa: F401
     from .notification import Notification  # noqa: F401
     from .report import Report  # noqa: F401
-    from .voucher import CouponAssigned # noqa: F401
+    from .coupon import CouponAssigned # noqa: F401
 
 
 class User(Base):
@@ -23,6 +23,8 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean(), default=True)
     is_superuser = Column(Boolean(), default=False)
+    path = Column(String(), nullable=True, default="")
+
     items = relationship("Item", back_populates="owner")
     contacts = relationship("Contact", back_populates="owner")
     locations = relationship("Location", back_populates="owner")
