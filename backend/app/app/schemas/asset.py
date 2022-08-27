@@ -7,7 +7,6 @@ from pydantic import BaseModel
 # Shared properties
 class AssetBase(BaseModel):
     name: str
-    path: str
 
 
 # Properties to receive on Asset creation
@@ -17,7 +16,7 @@ class AssetCreate(AssetBase):
 
 # Properties to receive on Asset update
 class AssetUpdate(AssetBase):
-    pass
+    path: str
 
 
 # Properties shared by models stored in DB
