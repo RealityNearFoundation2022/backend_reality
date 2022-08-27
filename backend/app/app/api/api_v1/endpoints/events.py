@@ -1,99 +1,114 @@
 from typing import Any, List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import Response, JSONResponse
+from fastapi import APIRouter, Depends, HTTPException, Body, status
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
+from pymongo import MongoClient
 
 from app import crud, models, schemas
 from app.api import deps
 
+from app.models import mongo
+
 router = APIRouter()
 
-
-@router.get("/", response_model=List[schemas.Item])
-def read_items(
-    db: Session = Depends(deps.get_db),
-    skip: int = 0,
-    limit: int = 100,
-    current_user: models.User = Depends(deps.get_current_active_user),
+@router.get("/", response_model=List[mongo.EventModel])
+async def read_events(
+    db: Session = Depends(deps.get_database),
+    #skip: int = 0,
+    #limit: int = 100,
+    # current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
-    Retrieve items.
+    Retrieve events.
     """
-    if crud.user.is_superuser(current_user):
-        items = crud.item.get_multi(db, skip=skip, limit=limit)
-    else:
-        items = crud.item.get_multi_by_owner(
-            db=db, owner_id=current_user.id, skip=skip, limit=limit
-        )
-    return items
+    events = await db["events"].find().to_list(1000)
+    return events
 
 
-@router.post("/", response_model=schemas.Item)
-def create_item(
+@router.post("/", response_model=mongo.EventModel)
+async def create_event(
     *,
-    db: Session = Depends(deps.get_db),
-    item_in: schemas.ItemCreate,
-    current_user: models.User = Depends(deps.get_current_active_user),
+    db: MongoClient = Depends(deps.get_database),
+    event_in: mongo.EventModel = Body(...),
+    # current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
-    Create new item.
+    Create new event.
     """
-    item = crud.item.create_with_owner(db=db, obj_in=item_in, owner_id=current_user.id)
-    return item
+    event = jsonable_encoder(event_in)
+    new_event = await db["events"].insert_one(event)
+    created_event = await db["events"].find_one({"_id": new_event.inserted_id})
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_event)
 
 
-@router.put("/{id}", response_model=schemas.Item)
-def update_item(
+@router.put("/{id}/image", response_model=mongo.EventModel)
+def update_image() -> Any:
+    pass
+
+@router.put("/{id}/media", response_model=mongo.EventModel)
+def update_media() -> Any:
+    pass
+
+@router.put("/{id}", response_description="Update a event", response_model=mongo.EventModel)
+async def update_event(
     *,
-    db: Session = Depends(deps.get_db),
-    id: int,
-    item_in: schemas.ItemUpdate,
+    db: Session = Depends(deps.get_database),
+    id: str, 
+    event: mongo.UpdateEventModel = Body(...),
     current_user: models.User = Depends(deps.get_current_active_user),
-) -> Any:
-    """
-    Update an item.
-    """
-    item = crud.item.get(db=db, id=id)
-    if not item:
-        raise HTTPException(status_code=404, detail="Item not found")
-    if not crud.user.is_superuser(current_user) and (item.owner_id != current_user.id):
+):
+
+    if not crud.user.is_superuser(current_user):
         raise HTTPException(status_code=400, detail="Not enough permissions")
-    item = crud.item.update(db=db, db_obj=item, obj_in=item_in)
-    return item
 
+    event = {k: v for k, v in event.dict().items() if v is not None}
 
-@router.get("/{id}", response_model=schemas.Item)
-def read_item(
+    if len(event) >= 1:
+        update_result = await db["events"].update_one({"_id": id}, {"$set": event})
+
+        if update_result.modified_count == 1:
+            if (
+                updated_event := await db["events"].find_one({"_id": id})
+            ) is not None:
+                return updated_event
+
+    if (existing_event := await db["events"].find_one({"_id": id})) is not None:
+        return existing_event
+
+    raise HTTPException(status_code=404, detail=f"Event {id} not found")
+
+@router.get(
+    "/{id}", response_description="Get a single event", response_model=mongo.EventModel
+)
+async def read_event(
     *,
-    db: Session = Depends(deps.get_db),
-    id: int,
-    current_user: models.User = Depends(deps.get_current_active_user),
+    db: Session = Depends(deps.get_database),
+    id: str
 ) -> Any:
     """
-    Get item by ID.
+    Get event by ID.
     """
-    item = crud.item.get(db=db, id=id)
-    if not item:
-        raise HTTPException(status_code=404, detail="Item not found")
-    if not crud.user.is_superuser(current_user) and (item.owner_id != current_user.id):
-        raise HTTPException(status_code=400, detail="Not enough permissions")
-    return item
+    if (event := await db["events"].find_one({"_id": id})) is not None:
+        return event
+
+    raise HTTPException(status_code=404, detail=f"Event {id} not found")
 
 
-@router.delete("/{id}", response_model=schemas.Item)
-def delete_item(
-    *,
-    db: Session = Depends(deps.get_db),
-    id: int,
-    current_user: models.User = Depends(deps.get_current_active_user),
-) -> Any:
-    """
-    Delete an item.
-    """
-    item = crud.item.get(db=db, id=id)
-    if not item:
-        raise HTTPException(status_code=404, detail="Item not found")
-    if not crud.user.is_superuser(current_user) and (item.owner_id != current_user.id):
+@router.delete("/{id}", response_description="Delete a events")
+async def delete_events(*,
+    db: MongoClient = Depends(deps.get_database),    
+    id: str,
+    current_user: models.User = Depends(deps.get_current_active_user)
+    ):
+
+    if not crud.user.is_superuser(current_user):
         raise HTTPException(status_code=400, detail="Not enough permissions")
-    item = crud.item.remove(db=db, id=id)
-    return item
+
+    delete_result = await db["events"].delete_one({"_id": id})
+
+    if delete_result.deleted_count == 1:
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+    raise HTTPException(status_code=404, detail=f"Event {id} not found")

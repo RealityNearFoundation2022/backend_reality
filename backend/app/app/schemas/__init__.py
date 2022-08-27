@@ -9,3 +9,4 @@ from .notification import Notification, NotificationCreate, NotificationInDB, No
 from .location import Location, LocationCreate, LocationInDB, LocationUpdate
 from .coupon import Coupon, CouponCreate, CouponInDB, CouponUpdate, CouponAssigned, CouponAssignedInDBBase, CouponAssignedCreate, CouponAssignedUpdate
 from .asset import Asset, AssetCreate, AssetInDB, AssetUpdate
+from .event import Events, EventsCreate, EventsInDB, EventsUpdate

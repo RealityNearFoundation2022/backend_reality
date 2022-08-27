@@ -68,6 +68,27 @@ services:
         # to disable www redirection remove the section: ${STACK_NAME?Variable not set}-www-redirect,
         - traefik.http.routers.${STACK_NAME?Variable not set}-proxy-http.middlewares=${STACK_NAME?Variable not set}-www-redirect,${STACK_NAME?Variable not set}-https-redirect
 
+  mongo:
+    image: mongo:5.0.10
+    restart: always
+    env_file:
+      - .env
+    #environment:
+    #  - MONGO_INITDB_ROOT_USERNAME=root
+    #  - MONGO_INITDB_ROOT_PASSWORD=example
+  
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    env_file:
+      - .env
+    #environment:
+    #  ME_CONFIG_MONGODB_ADMINUSERNAME: root
+    #  ME_CONFIG_MONGODB_ADMINPASSWORD: example
+    #  ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+
   db:
     image: postgres:12
     volumes:
