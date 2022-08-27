@@ -131,8 +131,6 @@ def read_asset(
     asset = crud.asset.get(db=db, id=id)
     if not asset:
         raise HTTPException(status_code=404, detail="Asset not found")
-    if not crud.user.is_superuser(current_user):
-        raise HTTPException(status_code=400, detail="Not enough permissions")
     return asset
 
 
