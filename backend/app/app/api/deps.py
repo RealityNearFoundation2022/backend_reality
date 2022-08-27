@@ -9,7 +9,9 @@ from sqlalchemy.orm import Session
 from app import crud, models, schemas
 from app.core import security
 from app.core.config import settings
-from app.db.session import SessionLocal
+from app.db.session import SessionLocal#, SessionLocalMongo
+
+import motor.motor_asyncio
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/login/access-token"
@@ -22,6 +24,30 @@ def get_db() -> Generator:
         yield db
     finally:
         db.close()
+
+
+def get_database():
+    #from pymongo import MongoClient
+    #import pymongo
+
+    # Provide the mongodb atlas url to connect python to mongodb using pymongo
+                         #mongodb+srv://username:password@mflix-m5hjq.mongodb.net/test?retryWrites=true
+    CONNECTION_STRING ="mongodb://root:example@mongo:27017" #"mongodb://root:example@mongo.mongodb.net/myFirstDatabase?retryWrites=true"
+    client = motor.motor_asyncio.AsyncIOMotorClient(CONNECTION_STRING)
+    db = client.test
+    # Create a connection using MongoClient. You can import MongoClient or use pymongo.MongoClient
+    #from pymongo import MongoClient
+    #client = MongoClient(CONNECTION_STRING)
+    #client = MongoClient(host="mongo", port=27017,username="root",password="example")
+    # Create the database for our example (we will use the same database throughout the tutorial
+    return db
+
+# def get_db_mongo() -> Generator:
+#     try:
+#         db = SessionLocalMongo()
+#         yield db
+#     finally:
+#         db.close()
 
 
 def get_current_user(

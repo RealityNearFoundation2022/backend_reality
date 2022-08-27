@@ -51,11 +51,11 @@ async def upload_image_user(
 
     compress_file = '{}{}'.format(uuid4(), extension)  
 
-    with open('./static/' + compress_file, 'wb') as image:
+    with open('./static/users/' + compress_file, 'wb') as image:
         image.write(contents)
         image.close()
 
-    path = '/api/v1/static/' + compress_file
+    path = '/api/v1/static/users/' + compress_file
 
     print(user.__dict__)
 

@@ -17,6 +17,7 @@ class Asset(Base):
     name = Column(String)
     path = Column(String(128), nullable=False)  
     coupons = relationship("Coupon", back_populates="asset")
+    #distance = Column(String, default="0")
 
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
@@ -33,6 +34,10 @@ class Coupon(Base):
     terms = Column(String)
     quantity = Column(Integer, default=0)
     expiration = Column(DateTime, nullable=False)
+    
+    # lng = Column(String, nullabled=True)
+    # lat = Column(String, nullabled=True)
+    # time = Column(String, nullable=True)
 
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
