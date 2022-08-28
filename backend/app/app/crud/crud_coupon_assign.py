@@ -47,6 +47,15 @@ class CRUDCouponAssigned(CRUDBase[CouponAssigned, CouponAssignedCreate, CouponAs
             .limit(limit)
             .all()
         )
+
+    def get_last_by_coupon(
+        self, db: Session, *, coupon_id: int
+    ) -> int:
+        return (
+            db.query(self.model)
+            .filter(CouponAssigned.coupon_id == coupon_id)
+            .first()
+        )
     
     def count_by_coupon(
         self, db: Session, *, coupon_id: int
