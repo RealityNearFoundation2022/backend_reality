@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app import crud, models, schemas
 from app.api import deps
+from datetime import datetime, timedelta
 
 router = APIRouter()
 
@@ -72,7 +73,7 @@ def update_coupon(
     coupon = crud.coupon.get(db=db, id=id)
     if not coupon:
         raise HTTPException(status_code=404, detail="coupon not found")
-    if not crud.user.is_superuser(current_user) and (item.owner_id != current_user.id):
+    if not crud.user.is_superuser(current_user):
         raise HTTPException(status_code=400, detail="Not enough permissions")
     coupon = crud.coupon.update(db=db, db_obj=coupon, obj_in=coupon_in)
     return coupon
@@ -98,6 +99,14 @@ def assign_coupon(
     if count + 1 > coupon.quantity:
         raise HTTPException(status_code=404, detail="Coupon not found")
 
+    # validar que el ultimo cupon asignado ya haya pasado el tiempo de espera
+    last = crud.couponassigned.get_last_by_coupon(db=db, coupon_id=coupon.id)
+
+    if last:
+        now = datetime.now()
+
+        if (last.created_at + timedelta(minutes=int(coupon.time))) > now:
+            raise HTTPException(status_code=404, detail="Lock by time")
 
     # validar si el usuario ya tiene un cupon asignado
     userbycoupon = crud.couponassigned.get_by_owner_and_coupon(db=db, owner_id=current_user.id, coupon_id=coupon.id)

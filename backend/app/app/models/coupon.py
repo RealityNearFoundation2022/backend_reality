@@ -1,3 +1,4 @@
+from email.policy import default
 from typing import TYPE_CHECKING
 
 from datetime import datetime
@@ -15,7 +16,7 @@ if TYPE_CHECKING:
 class Asset(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
-    path = Column(String(128), nullable=False)  
+    path = Column(String(128), nullable=True)  
     coupons = relationship("Coupon", back_populates="asset")
     #distance = Column(String, default="0")
 
@@ -37,7 +38,7 @@ class Coupon(Base):
     
     # lng = Column(String, nullabled=True)
     # lat = Column(String, nullabled=True)
-    # time = Column(String, nullable=True)
+    time = Column(String, nullable=True, default=30)
 
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
