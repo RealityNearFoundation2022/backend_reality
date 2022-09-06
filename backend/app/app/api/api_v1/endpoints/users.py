@@ -11,7 +11,7 @@ import os
 from app import crud, models, schemas
 from app.api import deps
 from app.core.config import settings
-from app.utils import send_new_account_email
+from app.utils import send_new_account_email, save_image
 
 router = APIRouter()
 
@@ -30,34 +30,10 @@ async def upload_image_user(
     Update image of user.
     """
     user = crud.user.get(db=db, id=current_user.id)
-    #if not user:
-    #print(file.filename)
-    #print(file.write(bytes))
-    #print(file.read(bytes))
-    contents = file.file.read()
+    
+    formats = [".png", ".jpg"]
 
-    # print(contents)
-    extension = os.path.splitext(file.filename)[1]
-
-    #print(extension)
-
-    # print(extension != ".jpg")
-
-    if extension != ".jpg" and extension != ".png":
-        raise HTTPException(
-            status_code=400,
-            detail="The extension must be jpg or png",
-        )
-
-    compress_file = '{}{}'.format(uuid4(), extension)  
-
-    with open('./static/users/' + compress_file, 'wb') as image:
-        image.write(contents)
-        image.close()
-
-    path = '/api/v1/static/users/' + compress_file
-
-    print(user.__dict__)
+    path = save_image(formats, "users", file)
 
     user_in = schemas.UserUpdate(
         email = user.email,
