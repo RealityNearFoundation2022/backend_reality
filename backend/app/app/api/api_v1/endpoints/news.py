@@ -101,8 +101,10 @@ async def add_article(
 
     d = {"EventNewCreate": new}
 
-    arr = new["articles"]
-
+    arr = []
+    if 'articles' in new:
+        arr = new["articles"]
+    
     print(text)
 
     arr.append({
