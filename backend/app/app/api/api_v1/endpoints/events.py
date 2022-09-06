@@ -49,7 +49,7 @@ async def create_event(
     created_event = await db[COLLECTION_EVENTS].find_one({"_id": new_event.inserted_id})
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_event)
 
-@router.put("/{id}/media/{type}", response_model=mongo.UpdateEventModel)
+@router.put("/{id}/media/{type}", response_model=mongo.ListEventModel)
 async def update_media(
     *,
     db: MongoClient = Depends(deps.get_database),
@@ -80,7 +80,10 @@ async def update_media(
 
     d = {"EventModelCreate": updated_event}
 
-    arr = updated_event["media"]
+    arr = []
+
+    if 'media' in updated_event:
+        arr = updated_event["media"]
 
     arr.append(
         {

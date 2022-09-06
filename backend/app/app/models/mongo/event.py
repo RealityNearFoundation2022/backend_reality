@@ -38,7 +38,12 @@ class EventModel(BaseModel):
                 "planners": "",
                 "date": "",
                 "long_description": "",
-                "url": "nuruk"
+                "url": "nuruk",
+                "location": {
+                    "lng": "111111111",
+                    "lat": "333333333",
+                    "address": "calle 5 la plata - buenos aires - argentina"
+                }
             }
         }
 
