@@ -1,11 +1,16 @@
 import logging
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
+
+from fastapi import UploadFile, HTTPException
+
+import os
 
 import emails
 from emails.template import JinjaTemplate
 from jose import jwt
+from uuid import uuid4
 
 from app.core.config import settings
 
@@ -104,3 +109,26 @@ def verify_password_reset_token(token: str) -> Optional[str]:
         return decoded_token["email"]
     except jwt.JWTError:
         return None
+
+
+def save_image(formats, path: str, file: UploadFile):
+    contents = file.file.read()
+
+    extension = os.path.splitext(file.filename)[1]
+
+    if extension not in formats:
+        raise HTTPException(
+            status_code=400,
+            detail="The extension must be " + ", ".join(formats)
+        )
+
+    compress_file = '{}{}'.format(uuid4(), extension)  
+
+    with open('./static/'+path+'/' + compress_file, 'wb') as image:
+        image.write(contents)
+        image.close()
+
+    path = '/api/v1/static/'+path+'/' + compress_file
+
+    return path
+
