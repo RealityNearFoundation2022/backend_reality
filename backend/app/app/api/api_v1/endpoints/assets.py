@@ -7,6 +7,9 @@ from app import crud, models, schemas
 from app.api import deps
 from uuid import uuid4
 
+
+from app.utils import save_image
+
 import os
 
 router = APIRouter()
@@ -60,34 +63,9 @@ async def upload_3d_asset(
         raise HTTPException(status_code=400, detail="Not enough permissions")
 
     user = crud.user.get(db=db, id=current_user.id)
-    #if not user:
-    #print(file.filename)
-    #print(file.write(bytes))
-    #print(file.read(bytes))
-    contents = file.file.read()
 
-    # print(contents)
-    extension = os.path.splitext(file.filename)[1]
-
-    #print(extension)
-
-    # print(extension != ".jpg")
-
-    if extension != ".glb":
-        raise HTTPException(
-            status_code=400,
-            detail="The extension must be .glb",
-        )
-
-    compress_file = '{}{}'.format(uuid4(), extension)  
-
-    with open('./static/assets/' + compress_file, 'wb') as image:
-        image.write(contents)
-        image.close()
-
-    path = '/api/v1/static/assets/' + compress_file
-
-    # print(user.__dict__)
+    formats = [".glb"]
+    path = save_image(formats, "assets", file)
 
     asset_in = schemas.AssetUpdate(
         name = asset.name,

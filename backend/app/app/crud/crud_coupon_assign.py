@@ -54,6 +54,7 @@ class CRUDCouponAssigned(CRUDBase[CouponAssigned, CouponAssignedCreate, CouponAs
         return (
             db.query(self.model)
             .filter(CouponAssigned.coupon_id == coupon_id)
+            .order_by(CouponAssigned.created_at.desc())
             .first()
         )
     
