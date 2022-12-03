@@ -103,7 +103,6 @@ def create_user(
 def update_user_me(
     *,
     db: Session = Depends(deps.get_db),
-    password: str = Body(None),
     full_name: str = Body(None),
     email: EmailStr = Body(None),
     avatar: str = Body(None),
@@ -114,8 +113,6 @@ def update_user_me(
     """
     current_user_data = jsonable_encoder(current_user)
     user_in = schemas.UserUpdate(**current_user_data)
-    if password is not None:
-        user_in.password = password
     if full_name is not None:
         user_in.full_name = full_name
     if email is not None:

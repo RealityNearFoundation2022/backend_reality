@@ -12,6 +12,7 @@ class UserBase(BaseModel):
     full_name: Optional[str] = None
     path: Optional[str] = None
     avatar: Optional[str] = None
+    is_invited: Optional[str] = None
 #    reports: Optional[str] = None
 
 
@@ -23,7 +24,8 @@ class UserCreate(UserBase):
 
 # Properties to receive via API on update
 class UserUpdate(UserBase):
-    password: Optional[str] = None
+    # password: Optional[str] = None
+    pass
 
 
 class UserInDBBase(UserBase):

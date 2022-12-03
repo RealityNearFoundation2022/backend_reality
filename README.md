@@ -18,6 +18,15 @@
 docker-compose up -d
 ```
 
+* before your need, set a new timezone with the next commands
+
+docker-compose exec backend bash 
+
+sudo timedatectl set-timezone America/Lima
+
+sudo timedatectl set-ntp on
+
+
 * Now you can open your browser and interact with these URLs:
 
 Frontend, built with Docker, with routes handled based on the path: http://localhost

@@ -13,6 +13,7 @@ class CouponBase(BaseModel):
     terms: str
     quantity: int
     expiration: str
+    start: str
     time: str
 
 # Properties to receive on Coupon creation
@@ -64,6 +65,7 @@ class CouponInDBBase(CouponBase):
     terms: str
     quantity: int
     expiration: datetime
+    start: datetime
     time: Optional[str]
     created_at: datetime
     updated_at: datetime

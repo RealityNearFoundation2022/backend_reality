@@ -24,6 +24,7 @@ class EventModel(BaseModel):
     date: str = Field(...)
     long_description: str = Field(...)
     # media: List[Optional[MediaModel]] = Field(...)
+    coupons: Optional[List] = None
     url: str = Field(...)
     location: Optional[LocationModel] = None
 
@@ -38,6 +39,7 @@ class EventModel(BaseModel):
                 "planners": "",
                 "date": "",
                 "long_description": "",
+                "coupons": ["1", "2"],
                 "url": "nuruk",
                 "location": {
                     "lng": "111111111",
@@ -121,6 +123,7 @@ class UpdateEventModel(BaseModel):
     date: Optional[str] = Field(...)
     long_description: Optional[str] = Field(...)
     # media: Optional[List[MediaModel]] = Field(...)
+    coupons: Optional[List] = None
     url: Optional[str] = Field(...)
     location: Optional[LocationModel] = None
 

@@ -49,7 +49,7 @@ async def create_event(
     created_event = await db[COLLECTION_EVENTS].find_one({"_id": new_event.inserted_id})
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_event)
 
-@router.put("/{id}/media/{type}", response_model=mongo.ListEventModel)
+@router.put("/{id}/media/{type}/", response_model=mongo.ListEventModel)
 async def update_media(
     *,
     db: MongoClient = Depends(deps.get_database),
@@ -106,7 +106,7 @@ async def update_media(
     return updated_event
 
 
-@router.put("/{id}", response_description="Update a event", response_model=mongo.EventModel)
+@router.put("/{id}/", response_description="Update a event", response_model=mongo.EventModel)
 async def update_event(
     *,
     db: Session = Depends(deps.get_database),
@@ -135,7 +135,7 @@ async def update_event(
     raise HTTPException(status_code=404, detail=f"Event {id} not found")
 
 @router.get(
-    "/{id}", response_description="Get a single event", response_model=mongo.EventModel
+    "/{id}/", response_description="Get a single event", response_model=mongo.EventModel
 )
 async def read_event(
     *,
@@ -151,7 +151,7 @@ async def read_event(
     raise HTTPException(status_code=404, detail=f"Event {id} not found")
 
 
-@router.delete("/{id}", response_description="Delete a events")
+@router.delete("/{id}/", response_description="Delete a events")
 async def delete_events(*,
     db: MongoClient = Depends(deps.get_database),    
     id: str,
