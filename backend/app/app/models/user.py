@@ -25,6 +25,7 @@ class User(Base):
     is_superuser = Column(Boolean(), default=False)
     path = Column(String(), nullable=True, default="")
     avatar = Column(String(), nullable=True, default="")
+    is_invited = Column(String(), nullable=True, default="")
 
     items = relationship("Item", back_populates="owner")
     contacts = relationship("Contact", back_populates="owner")

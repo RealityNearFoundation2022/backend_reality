@@ -4,6 +4,6 @@ docker-stack.yml
 ./backend/app/static/users/*.png
 ./backend/app/static/users/*.jpg
 
-./backend/app/static/assets/*.glb
+./backend/app/static/*/*
 
 ./backend/app/dist/*

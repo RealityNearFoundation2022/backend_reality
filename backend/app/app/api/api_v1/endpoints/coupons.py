@@ -88,8 +88,8 @@ def assign_coupon(
     """
     Assign an coupon.
     """
-    if True:
-        raise HTTPException(status_code=404, detail="Coupon Lock")
+    #if True:
+    #    raise HTTPException(status_code=404, detail="Coupon Lock")
     
     now = datetime.utcnow()
     coupon = crud.coupon.get(db=db, id=id_coupon)
@@ -97,8 +97,13 @@ def assign_coupon(
     if not coupon:
         raise HTTPException(status_code=404, detail="Coupon not found")
 
-    #if (coupon.expiration < now):
-    #    raise HTTPException(status_code=404, detail="Time expiration")
+    #start validar fecha de inicio
+    if coupon.start:
+        raise HTTPException(status_code=404, detail="Coupon not started")
+
+    # si la fecha de expiracion es mayor al tiempo actual
+    if (coupon.expiration < now):
+        raise HTTPException(status_code=404, detail="Time expiration")
 
     # validar la cantidad del cupon
 
