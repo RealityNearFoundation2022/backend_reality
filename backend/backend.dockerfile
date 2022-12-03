@@ -21,5 +21,8 @@ RUN bash -c "if [ $INSTALL_DEV == 'true' ] ; then poetry install --no-root ; els
 ARG INSTALL_JUPYTER=false
 RUN bash -c "if [ $INSTALL_JUPYTER == 'true' ] ; then pip install jupyterlab ; fi"
 
+RUN bash -c "timedatectl set-timezone America/Lima"
+RUN bash -c "timedatectl set-ntp on" 
+
 COPY ./app /app
 ENV PYTHONPATH=/app

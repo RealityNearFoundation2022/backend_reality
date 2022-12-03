@@ -12,12 +12,21 @@ if TYPE_CHECKING:
 
 
 
+class AssetLocation(Base):
+    id = Column(Integer, primary_key=True, index=True)
+    lat = Column(String(128), nullable=True)
+    lng = Column(String(128), nullable=True)
+    rule = Column(String(128), nullable=True, default="")
+    asset_id = Column(Integer, ForeignKey("asset.id"))
+    asset = relationship("Asset", back_populates="locations")
+
 # asset asociado a un cupon
 class Asset(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
-    path = Column(String(128), nullable=True)  
+    path = Column(String(128), nullable=True)
     coupons = relationship("Coupon", back_populates="asset")
+    locations = relationship("AssetLocation", back_populates="asset")
     #distance = Column(String, default="0")
 
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
@@ -35,6 +44,7 @@ class Coupon(Base):
     terms = Column(String)
     quantity = Column(Integer, default=0)
     expiration = Column(DateTime, nullable=False)
+    start = Column(DateTime, nullable=True)
     
     # lng = Column(String, nullabled=True)
     # lat = Column(String, nullabled=True)

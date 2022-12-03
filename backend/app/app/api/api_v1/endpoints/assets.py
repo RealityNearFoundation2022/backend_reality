@@ -64,7 +64,7 @@ async def upload_3d_asset(
 
     user = crud.user.get(db=db, id=current_user.id)
 
-    formats = [".glb"]
+    formats = [".glb", ".bin"]
     path = save_image(formats, "assets", file)
 
     asset_in = schemas.AssetUpdate(
@@ -112,20 +112,20 @@ def read_asset(
     return asset
 
 
-@router.delete("/{id}", response_model=schemas.Asset)
-def delete_asset(
-    *,
-    db: Session = Depends(deps.get_db),
-    id: int,
-    current_user: models.User = Depends(deps.get_current_active_user),
-) -> Any:
-    """
-    Delete an Asset.
-    """
-    asset = crud.asset.get(db=db, id=id)
-    if not asset:
-        raise HTTPException(status_code=404, detail="Asset not found")
-    if not crud.user.is_superuser(current_user):
-        raise HTTPException(status_code=400, detail="Not enough permissions")
-    asset = crud.asset.remove(db=db, id=id)
-    return asset
+# @router.delete("/{id}", response_model=schemas.Asset)
+# def delete_asset(
+#     *,
+#     db: Session = Depends(deps.get_db),
+#     id: int,
+#     current_user: models.User = Depends(deps.get_current_active_user),
+# ) -> Any:
+#     """
+#     Delete an Asset.
+#     """
+#     asset = crud.asset.get(db=db, id=id)
+#     if not asset:
+#         raise HTTPException(status_code=404, detail="Asset not found")
+#     if not crud.user.is_superuser(current_user):
+#         raise HTTPException(status_code=400, detail="Not enough permissions")
+#     asset = crud.asset.remove(db=db, id=id)
+#     return asset

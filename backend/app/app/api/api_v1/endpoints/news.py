@@ -50,7 +50,7 @@ async def create_news(
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_new)
 
 
-@router.patch("/{id}/image", response_model=mongo.ListNewModel)
+@router.patch("/{id}/image/", response_model=mongo.ListNewModel)
 async def upload_image(
     *,
     db: MongoClient = Depends(deps.get_database),
@@ -81,7 +81,7 @@ async def upload_image(
     raise HTTPException(status_code=400, detail=f"Error Save image {id}")
 
 
-@router.patch("/{id}/article/{text}")
+@router.patch("/{id}/article/{text}/")
 async def add_article(
     *,
     db: MongoClient = Depends(deps.get_database),
@@ -126,7 +126,7 @@ async def add_article(
 
 
 
-@router.put("/{id}", response_description="Update a new", response_model=mongo.ListNewModel)
+@router.put("/{id}/", response_description="Update a new", response_model=mongo.ListNewModel)
 async def update_new(
     *,
     db: Session = Depends(deps.get_database),
@@ -159,7 +159,7 @@ async def update_new(
 
 
 @router.get(
-    "/{id}", response_description="Get a single new", response_model=mongo.ListNewModel
+    "/{id}/", response_description="Get a single new", response_model=mongo.ListNewModel
 )
 async def read_new(
     *,
@@ -175,7 +175,7 @@ async def read_new(
     raise HTTPException(status_code=404, detail=f"New {id} not found")
 
 
-@router.delete("/{id}", response_description="Delete a new")
+@router.delete("/{id}/", response_description="Delete a new")
 async def delete_new(*,
     db: MongoClient = Depends(deps.get_database),    
     id: str,

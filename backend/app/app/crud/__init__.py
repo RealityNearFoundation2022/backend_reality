@@ -8,6 +8,7 @@ from .crud_location      import location
 from .crud_coupon        import coupon
 from .crud_coupon_assign import couponassigned
 from .crud_asset         import asset
+from .crud_asset_location import asset_location
 # For a new basic set of CRUD operations you could just do
 
 # from .base import CRUDBase

@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Optional, List
 from datetime import datetime
 
 from pydantic import BaseModel
@@ -7,7 +7,7 @@ from pydantic import BaseModel
 # Shared properties
 class AssetBase(BaseModel):
     name: str
-
+    locations: Optional[List] = None
 
 # Properties to receive on Asset creation
 class AssetCreate(AssetBase):
