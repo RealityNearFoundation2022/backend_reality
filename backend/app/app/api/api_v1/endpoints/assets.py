@@ -50,7 +50,8 @@ async def upload_3d_asset(
     *,
     db: Session = Depends(deps.get_db),
     id: int,
-    file: UploadFile = File(...),
+    file_1: UploadFile = File(...),
+    file_2: UploadFile = File(...),
     current_user: models.User = Depends(deps.get_current_active_user)
     ) -> Any:
     """
@@ -65,11 +66,13 @@ async def upload_3d_asset(
     user = crud.user.get(db=db, id=current_user.id)
 
     formats = [".glb", ".bin"]
-    path = save_image(formats, "assets", file)
+    path_1 = save_image(formats, "assets", file_1)
+    path_2 = save_image(formats, "assets", file_2)
 
     asset_in = schemas.AssetUpdate(
         name = asset.name,
-        path = path
+        path_1 = path_1,
+        path_2 = path_2
     )
 
     asset = crud.asset.update(db, db_obj=asset, obj_in=asset_in)
