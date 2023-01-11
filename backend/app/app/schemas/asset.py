@@ -16,14 +16,16 @@ class AssetCreate(AssetBase):
 
 # Properties to receive on Asset update
 class AssetUpdate(AssetBase):
-    path: str
+    path_1: str
+    path_2: str
 
 
 # Properties shared by models stored in DB
 class AssetInDBBase(AssetBase):
     id: int
     name: str
-    path: Optional[str]
+    path_1: Optional[str]
+    path_2: Optional[str]
 
     created_at: datetime
     updated_at: datetime
