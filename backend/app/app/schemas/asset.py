@@ -17,7 +17,7 @@ class AssetCreate(AssetBase):
 
 # Properties to receive on Asset update
 class AssetUpdate(AssetBase):
-    path_1: Optional[str]
+    path: Optional[str]
     path_2: Optional[str]
 
 
@@ -25,7 +25,7 @@ class AssetUpdate(AssetBase):
 class AssetInDBBase(AssetBase):
     id: int
     name: str
-    path_1: Optional[str]
+    path: Optional[str]
     path_2: Optional[str]
     default: Optional[bool]
 
