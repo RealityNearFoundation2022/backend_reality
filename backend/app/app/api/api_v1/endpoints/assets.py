@@ -71,7 +71,7 @@ async def upload_3d_asset(
 
     asset_in = schemas.AssetUpdate(
         name = asset.name,
-        path_1 = path_1,
+        path = path_1,
         path_2 = path_2
     )
 

@@ -25,7 +25,7 @@ class Asset(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
     default = Column(Boolean, default=False)
-    path_1 = Column(String(128), nullable=True)
+    path = Column(String(128), nullable=True)
     path_2 = Column(String(128), nullable=True)
     coupons = relationship("Coupon", back_populates="asset")
     locations = relationship("AssetLocation", back_populates="asset")
