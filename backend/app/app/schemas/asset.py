@@ -38,7 +38,7 @@ class AssetInDBBase(AssetBase):
 
 # Properties to return to client
 class Asset(AssetInDBBase):
-    pass
+    coupons: Any
 
 
 # Properties properties stored in DB
