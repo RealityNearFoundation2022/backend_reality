@@ -86,12 +86,13 @@ def create_user(
         send_new_account_email(
             email_to=user_in.email, username=user_in.email, password=user_in.password
         )
-    configuration_in = schemas.ConfigurationCreate(location_enabled=0)
+    configuration_in = schemas.ConfigurationCreate(location_enabled=0, owner_id=user.id)
     configuration = crud.configuration.create(db, obj_in=configuration_in)
 
     location_in = schemas.LocationCreate(
         lat = 0,
-        lng = 0
+        lng = 0,
+        owner_id=user.id
     )
 
     location = crud.location.create(db, obj_in=location_in)
@@ -211,4 +212,18 @@ def update_user(
             detail="The user with this username does not exist in the system",
         )
     user = crud.user.update(db, db_obj=user, obj_in=user_in)
+    return user
+
+
+@router.delete("/", response_model=schemas.User)
+def delete_user(
+    current_user: models.User = Depends(deps.get_current_active_user),
+    db: Session = Depends(deps.get_db),
+) -> Any:
+    """
+    Delete a user.
+    """
+    user = crud.user.remove(db, id=current_user.id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
     return user
