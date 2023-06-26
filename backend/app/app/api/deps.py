@@ -32,8 +32,12 @@ def get_database():
 
     # Provide the mongodb atlas url to connect python to mongodb using pymongo
                          #mongodb+srv://username:password@mflix-m5hjq.mongodb.net/test?retryWrites=true
+    USER=""
+    PASS=""
+    DB=""
     CONNECTION_STRING ="mongodb://root:example@mongo:27017" #"mongodb://root:example@mongo.mongodb.net/myFirstDatabase?retryWrites=true"
     client = motor.motor_asyncio.AsyncIOMotorClient(CONNECTION_STRING)
+    # get database test
     db = client.test
     # Create a connection using MongoClient. You can import MongoClient or use pymongo.MongoClient
     #from pymongo import MongoClient

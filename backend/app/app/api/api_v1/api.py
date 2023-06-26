@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.api_v1.endpoints import login, users, utils, contacts, location, notifications, reports, configuration, coupons, assets, events, news, assetlocation
+from app.api.api_v1.endpoints import login, users, utils, contacts, location, notifications, reports, configuration, coupons, assets, events, news, assetlocation, reelands
 
 api_router = APIRouter()
 api_router.include_router(login.router, tags=["login"])
@@ -17,3 +17,4 @@ api_router.include_router(assets.router, prefix="/assets", tags=["assets"])
 api_router.include_router(assetlocation.router, prefix="/asset", tags=["asset location"])
 api_router.include_router(events.router, prefix="/events", tags=["events"])
 api_router.include_router(news.router, prefix="/news", tags=["news"])
+api_router.include_router(reelands.router, prefix="/reelands", tags=["reelands"])
