@@ -7,4 +7,4 @@ from app.models.contact import Contact  # noqa
 from app.models.report import Report
 from app.models.location import Location
 from app.models.notification import Notification
-from app.models.coupon import Coupon, Asset, CouponAssigned
+from app.models.coupon import Coupon, Asset, CouponAssigned, CouponCategory, CouponReedeemed

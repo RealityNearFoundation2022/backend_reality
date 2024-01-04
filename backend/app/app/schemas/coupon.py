@@ -5,24 +5,59 @@ from pydantic import BaseModel
 
 
 # Shared properties
-class CouponBase(BaseModel):
-    asset_id: int
+class CuponBase(BaseModel):
+    owner_id: Optional[int] = None
+    img: str
     name: str
     title: str
     description: str
     terms: str
     quantity: int
-    expiration: str
-    start: str
-    time: str
+    expiration_date: str
+    start_date: str
+    active: bool
 
-# Properties to receive on Coupon creation
-class CouponCreate(CouponBase):
+class CuponInDBBase(CuponBase):
+    id: int
+    owner_id: int
+    img: str
+    name: str
+    title: str
+    description: str
+    terms: str
+    quantity: int
+    expiration_date: datetime
+    start_date: datetime
+    active: bool
+    class Config:
+        orm_mode = True
+
+
+class CuponCreate(CuponBase):
     pass
 
+class CuponUpdate(CuponBase):
+    pass
 
-# Properties to receive on Coupon update
-class CouponUpdate(CouponBase):
+class CuponCategoryBase(BaseModel):
+    name: str
+    img: str
+    active: bool
+    created_by: Optional[int] = None
+    updated_by: Optional[int] = None
+
+class CuponCategoryInDBBase(CuponCategoryBase):
+    id: int
+    name: str
+    img: str
+    active: bool
+    class Config:
+        orm_mode = True
+
+class CuponCategoryCreate(CuponCategoryBase):
+    pass
+
+class CuponCategoryUpdate(CuponCategoryBase):
     pass
 
 # Shared properties
@@ -55,35 +90,29 @@ class CouponAssignedInDBBase(BaseModel):
     class Config:
         orm_mode = True
 
-# Properties shared by models stored in DB
-class CouponInDBBase(CouponBase):
-    id: int
-    asset_id: int
-    name: str
-    title: str
-    description: str
-    terms: str
-    quantity: int
-    expiration: datetime
-    start: datetime
-    time: Optional[str]
-    created_at: datetime
-    updated_at: datetime
-
-    class Config:
-        orm_mode = True
-
-
-# Properties to return to client
-class Coupon(CouponInDBBase):
-    asset: Any
 
 #
 class CouponAssigned(CouponAssignedInDBBase):
     pass
 
-# Properties properties stored in DB
-class CouponInDB(CouponInDBBase):
+
+class CouponReedeemedBase(BaseModel):
+    coupon_id: int
+    owner_id: int
+    admin_id: int
+
+class CouponReedeemedCreate(CouponReedeemedBase):
     pass
 
+class CouponReedeemedUpdate(CouponReedeemedBase):
+    pass
 
+class CouponReedeemedInDBBase(BaseModel):
+    coupon_id: int
+    owner_id: int
+    admin_id: int
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        orm_mode = True

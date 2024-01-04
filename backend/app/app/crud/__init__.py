@@ -5,7 +5,7 @@ from .crud_report        import report
 from .crud_configuration import configuration
 from .crud_notification  import notification
 from .crud_location      import location
-from .crud_coupon        import coupon
+from .crud_couponapp        import coupon, category, redeemed
 from .crud_coupon_assign import couponassigned
 from .crud_asset         import asset
 from .crud_asset_location import asset_location
