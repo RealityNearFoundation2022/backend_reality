@@ -132,3 +132,5 @@ def save_image(formats, path: str, file: UploadFile):
 
     return path
 
+
+

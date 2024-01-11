@@ -7,9 +7,12 @@ from pydantic import BaseModel, EmailStr
 # Shared properties
 class UserBase(BaseModel):
     email: Optional[EmailStr] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    phone: Optional[str] = None
     is_active: Optional[bool] = True
     is_superuser: bool = False
-    full_name: Optional[str] = None
+    username: Optional[str] = None
     path: Optional[str] = None
     avatar: Optional[str] = None
     is_invited: Optional[str] = None

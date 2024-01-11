@@ -39,7 +39,10 @@ async def upload_image_user(
         email = user.email,
         is_active = user.is_active,
         is_superuser= user.is_superuser,
-        full_name= user.full_name,
+        username = user.username,
+        first_name = user.first_name,
+        last_name = user.last_name,
+        phone = user.phone,
         path=path,
         password=""
     )
@@ -104,7 +107,10 @@ def create_user(
 def update_user_me(
     *,
     db: Session = Depends(deps.get_db),
-    full_name: str = Body(None),
+    username: str = Body(None),
+    first_name: str = Body(None),
+    last_name: str = Body(None),
+    phone: str = Body(None),
     email: EmailStr = Body(None),
     avatar: str = Body(None),
     current_user: models.User = Depends(deps.get_current_active_user),
@@ -114,12 +120,18 @@ def update_user_me(
     """
     current_user_data = jsonable_encoder(current_user)
     user_in = schemas.UserUpdate(**current_user_data)
-    if full_name is not None:
-        user_in.full_name = full_name
+    if username is not None:
+        user_in.username = username
     if email is not None:
         user_in.email = email
     if avatar is not None:
         user_in.avatar = avatar
+    if first_name is not None:
+        user_in.first_name = first_name
+    if last_name is not None:
+        user_in.last_name = last_name
+    if phone is not None:
+        user_in.phone = phone
     user = crud.user.update(db, db_obj=current_user, obj_in=user_in)
     return user
 
@@ -141,7 +153,10 @@ def create_user_open(
     db: Session = Depends(deps.get_db),
     password: str = Body(...),
     email: EmailStr = Body(...),
-    full_name: str = Body(None),
+    username: str = Body(None),
+    first_name: str = Body(None),
+    last_name: str = Body(None),
+    phone: str = Body(None),
     avatar: str = Body(None),
 ) -> Any:
     """
@@ -158,7 +173,7 @@ def create_user_open(
             status_code=400,
             detail="The user with this username already exists in the system",
         )
-    user_in = schemas.UserCreate(password=password, email=email, full_name=full_name, avatar=avatar)
+    user_in = schemas.UserCreate(password=password, email=email, username=username, avatar=avatar, first_name=first_name, last_name=last_name, phone=phone)
     user = crud.user.create(db, obj_in=user_in)
 
     configuration_in = schemas.ConfigurationCreate(location_enabled=0, owner_id=user.id)

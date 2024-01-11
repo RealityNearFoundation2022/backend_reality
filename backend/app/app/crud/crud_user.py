@@ -16,7 +16,10 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         db_obj = User(
             email=obj_in.email,
             hashed_password=get_password_hash(obj_in.password),
-            full_name=obj_in.full_name,
+            username=obj_in.username,
+            first_name=obj_in.first_name,
+            last_name=obj_in.last_name,
+            phone=obj_in.phone,
             is_superuser=obj_in.is_superuser,
             avatar=obj_in.avatar,
         )
