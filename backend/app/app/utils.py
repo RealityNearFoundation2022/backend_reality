@@ -2,8 +2,11 @@ import logging
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-
 from fastapi import UploadFile, HTTPException
+
+import pandas as pd
+import io
+import cgi
 
 import os
 
@@ -133,4 +136,26 @@ def save_image(formats, path: str, file: UploadFile):
     return path
 
 
+def create_excel(report_data):
+    """
+    Crea un archivo Excel con los datos proporcionados por la función get_report.
 
+    Parameters:
+    - report_data (dict): Diccionario con las columnas y datos obtenidos de get_report.
+
+    Returns:
+    - BytesIO: Objeto BytesIO que contiene el archivo Excel.
+    """
+    try:
+        # Crear un DataFrame con las columnas y datos
+        df = pd.DataFrame(report_data['data'], columns=report_data['columns'])
+
+        # Guardar el DataFrame en un objeto BytesIO (en lugar de un archivo físico)
+        excel_file = io.BytesIO()
+        df.to_excel(excel_file, index=False)
+
+        return excel_file
+
+    except Exception as e:
+        print(f"Error al crear el archivo Excel: {str(e)}")
+        return None

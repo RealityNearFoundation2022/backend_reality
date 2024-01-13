@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any, List
 
 from fastapi import APIRouter, Body, Depends, HTTPException, File, UploadFile
@@ -157,6 +158,7 @@ def create_user_open(
     first_name: str = Body(None),
     last_name: str = Body(None),
     phone: str = Body(None),
+    birth_date: str = Body(None),
     avatar: str = Body(None),
 ) -> Any:
     """
@@ -173,7 +175,10 @@ def create_user_open(
             status_code=400,
             detail="The user with this username already exists in the system",
         )
-    user_in = schemas.UserCreate(password=password, email=email, username=username, avatar=avatar, first_name=first_name, last_name=last_name, phone=phone)
+    # convert string to datetime
+    if birth_date is not None:
+        birth_date = datetime.strptime(birth_date, '%Y-%m-%d')
+    user_in = schemas.UserCreate(password=password, email=email, username=username, avatar=avatar, first_name=first_name, last_name=last_name, phone=phone, birth_date=birth_date)
     user = crud.user.create(db, obj_in=user_in)
 
     configuration_in = schemas.ConfigurationCreate(location_enabled=0, owner_id=user.id)

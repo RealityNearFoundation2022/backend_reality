@@ -117,6 +117,57 @@ class CRUDCoupon(CRUDBase[Coupon, CuponCreate, CuponUpdate]):
         db.commit()
         return {"message": "Cupon reclamado exitosamente"}
     
+
+    ##REPORTS
+    #execute sp to get data for report 
+    def get_report(self, db: Session, *, owner_id: int) -> dict:
+        # Ejecutar la función y obtener el resultado
+        result = db.execute("""
+            SELECT 
+                c.id,
+                c.title,
+                'jockey plaza' as tienda,
+                'Peru' as pais,
+                us.first_name as nombre,
+                us.last_name as apellido,
+                us.email,
+                us.phone as celular,
+                EXTRACT(YEAR FROM AGE(current_date, us.birth_date)) as edad,
+                TO_CHAR(red.created_at, 'HH24:MI:SS') as hora_canje,
+                TO_CHAR(DATE(red.created_at), 'YYYY-MM-DD') as fecha_canje,
+                (
+                    SELECT c.quantity - COUNT(*)
+                    FROM public.couponreedeemed as redem
+                    WHERE redem.coupon_id = c.id
+                    AND redem.created_at <= red.created_at
+                ) as disponibles,
+                c.quantity as cantidad_creada
+            FROM 
+                public.coupon c 
+            INNER JOIN 
+                public.couponreedeemed red ON red.coupon_id = c.id
+            INNER JOIN 
+                public."user" us ON us.id = red.owner_id
+            WHERE 
+                c.owner_id = :owner_id
+        """, {"owner_id": owner_id})
+
+        # Obtener los datos solo si hay filas en el resultado
+        data = result.fetchall() if result.returns_rows else []
+
+        # Obtener los nombres de las columnas
+        columns = result.keys()
+
+        # Convertir los datos a una lista de listas
+        data = [list(row) for row in data]
+
+        # Cerrar explícitamente el resultado después de obtener los datos
+        result.close()
+
+        # Devolver el diccionario con las columnas y los datos
+        return {"columns": columns, "data": data}
+
+    
     
     
     

@@ -13,6 +13,7 @@ class UserBase(BaseModel):
     is_active: Optional[bool] = True
     is_superuser: bool = False
     username: Optional[str] = None
+    birth_date: Optional[datetime] = None
     path: Optional[str] = None
     avatar: Optional[str] = None
     is_invited: Optional[str] = None

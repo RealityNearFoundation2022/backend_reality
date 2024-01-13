@@ -23,6 +23,7 @@ class User(Base):
     last_name = Column(String, index=True, default="")
     phone = Column(String, index=True, default="")
     email = Column(String, unique=True, index=True, nullable=False)
+    birth_date = Column(DateTime, nullable=True, default=datetime.utcnow())
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean(), default=True)
     is_superuser = Column(Boolean(), default=False)

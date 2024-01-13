@@ -2,11 +2,13 @@ from typing import Any, List
 
 from fastapi import APIRouter, Depends, HTTPException, File, UploadFile
 from sqlalchemy.orm import Session
+from fastapi.responses import StreamingResponse
 
-from app import crud, models, schemas
+from app import crud, models, schemas 
 from app.api import deps
 from datetime import datetime, timedelta
-from app.utils import save_image
+from app.utils import save_image, create_excel
+
 
 router = APIRouter()
 formats = [".png", ".jpg"]
@@ -279,3 +281,37 @@ def redeem_coupon(
     Redeem an coupon.
     """
     crud.redeemed.redeem_coupon(db=db, obj_in=coupon_in)
+
+
+####### COUPON REPORT #######
+#download report of coupons
+@router.get("/report")
+def download_report(
+    db: Session = Depends(deps.get_db),
+    owner_id: int = None,
+    current_user: models.User = Depends(deps.get_current_active_superuser),
+) -> Any:
+    """
+    Download report of coupons.
+    """
+    try:
+        # Obtén los datos del informe desde la base de datos
+        report_data = crud.coupon.get_report(db=db, owner_id=owner_id)
+        print(report_data)
+        # Crea el archivo Excel
+        xls = create_excel(report_data)
+
+        # Configura los encabezados para la descarga del archivo
+        response = StreamingResponse(
+            iter([xls.getvalue()]),
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+        response.headers["Content-Disposition"] = 'attachment; filename="reporte.xlsx"'
+
+        return response
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error al procesar la solicitud: {str(e)}",
+        )
