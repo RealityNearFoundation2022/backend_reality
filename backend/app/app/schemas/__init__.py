@@ -11,3 +11,4 @@ from .coupon import CuponBase, CuponInDBBase, CuponCreate, CuponUpdate, CouponAs
 from .asset import Asset, AssetCreate, AssetInDB, AssetUpdate
 # from .event import Events, EventsCreate, EventsInDB, EventsUpdate
 from .assetlocation import AssetLocation, AssetLocationCreate, AssetLocationInDB, AssetLocationUpdate
+from .reward import  RewardCreate, RewardUpdate, RewardBase, RewardInDBBase

@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.api_v1.endpoints import login, users, utils, contacts, location, notifications, reports, configuration, coupons, couponsapp, assets, events, news, assetlocation
+from app.api.api_v1.endpoints import login, users, utils, reward, contacts, location, notifications, reports, configuration, coupons, couponsapp, assets, events, news, assetlocation
 
 api_router = APIRouter()
 api_router.include_router(login.router, tags=["login"])
@@ -18,3 +18,5 @@ api_router.include_router(assets.router, prefix="/assets", tags=["assets"])
 api_router.include_router(assetlocation.router, prefix="/asset", tags=["asset location"])
 api_router.include_router(events.router, prefix="/events", tags=["events"])
 api_router.include_router(news.router, prefix="/news", tags=["news"])
+api_router.include_router(reward.router, prefix="/rewards", tags=["rewards"])
+# api_router.include_router(rewa)

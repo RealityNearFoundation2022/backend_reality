@@ -1,6 +1,9 @@
+from email.message import EmailMessage
 import logging
 from datetime import datetime, timedelta
 from pathlib import Path
+import smtplib
+import ssl
 from typing import Any, Dict, List, Optional
 from fastapi import UploadFile, HTTPException
 
@@ -31,6 +34,14 @@ def send_email(
         mail_from=(settings.EMAILS_FROM_NAME, settings.EMAILS_FROM_EMAIL),
     )
     smtp_options = {"host": settings.SMTP_HOST, "port": settings.SMTP_PORT}
+    print("******* SEND EMAIL *******")
+    print("Emails_from_name: ", settings.EMAILS_FROM_NAME)
+    print("Emails_from_email: ", settings.EMAILS_FROM_EMAIL)
+    print("SMTP_HOST: ", settings.SMTP_HOST)
+    print("SMTP_PORT: ", settings.SMTP_PORT)
+    print("SMTP_TLS: ", settings.SMTP_TLS)
+    print("SMTP_USER: ", settings.SMTP_USER)
+    print("SMTP_PASSWORD: ", settings.SMTP_PASSWORD)
     if settings.SMTP_TLS:
         smtp_options["tls"] = True
     if settings.SMTP_USER:
@@ -38,7 +49,24 @@ def send_email(
     if settings.SMTP_PASSWORD:
         smtp_options["password"] = settings.SMTP_PASSWORD
     response = message.send(to=email_to, render=environment, smtp=smtp_options)
+    print("******* RESULT *******")
+    print(response)
     logging.info(f"send email result: {response}")
+    # assert settings.EMAILS_ENABLED, "no provided configuration for email variables"
+    # message = emails.Message(
+    #     subject=JinjaTemplate(subject_template),
+    #     html=JinjaTemplate(html_template),
+    #     mail_from=(settings.EMAILS_FROM_NAME, settings.EMAILS_FROM_EMAIL),
+    # )
+    # smtp_options = {"host": settings.SMTP_HOST, "port": settings.SMTP_PORT}
+    # if settings.SMTP_TLS:
+    #     smtp_options["tls"] = True
+    # if settings.SMTP_USER:
+    #     smtp_options["user"] = settings.SMTP_USER
+    # if settings.SMTP_PASSWORD:
+    #     smtp_options["password"] = settings.SMTP_PASSWORD
+    # response = message.send(to=email_to, render=environment, smtp=smtp_options)
+    # logging.info(f"send email result: {response}")
 
 
 def send_test_email(email_to: str) -> None:
@@ -59,20 +87,54 @@ def send_reset_password_email(email_to: str, email: str, token: str) -> None:
     subject = f"{project_name} - Password recovery for user {email}"
     with open(Path(settings.EMAIL_TEMPLATES_DIR) / "reset_password.html") as f:
         template_str = f.read()
+    
     server_host = settings.SERVER_HOST
     link = f"{server_host}/reset-password?token={token}"
-    send_email(
-        email_to=email_to,
-        subject_template=subject,
-        html_template=template_str,
-        environment={
-            "project_name": settings.PROJECT_NAME,
-            "username": email,
-            "email": email_to,
-            "valid_hours": settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS,
-            "link": link,
-        },
-    )
+    
+    email_sender = "realityneardev@gmail.com"
+    email_password = "ecgu ekco ocjj onvi"
+    
+    environment_html = {
+        "project_name": settings.PROJECT_NAME,
+        "username": email,
+        "email": email_to,
+        "valid_hours": settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS,
+        "link": link,
+    }
+    
+    # Replace Jinja variables with actual values
+    template_str = template_str.format(**environment_html)
+
+    print("******* SEND RESET PASSWORD EMAIL *******")
+    print(link)
+    print(email_to)
+    print(subject)
+    print(settings.PROJECT_NAME)
+
+    em = EmailMessage()
+    em['From'] = email_sender
+    em['To'] = email_to
+    em['Subject'] = subject
+    em.set_content(template_str, subtype='html')
+
+    context = ssl.create_default_context()
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        server.login(email_sender, email_password)
+        server.send_message(em)
+    # send_email(
+    #     email_to=email_to,
+    #     subject_template=subject,
+    #     html_template=template_str,
+    #     environment={
+    #         "project_name": settings.PROJECT_NAME,
+    #         "username": email,
+    #         "email": email_to,
+    #         "valid_hours": settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS,
+    #         "link": link,
+    #     },
+    # )
+
 
 
 def send_new_account_email(email_to: str, username: str, password: str) -> None:
