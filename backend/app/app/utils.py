@@ -101,9 +101,14 @@ def send_reset_password_email(email_to: str, email: str, token: str) -> None:
         "valid_hours": settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS,
         "link": link,
     }
-    
+
+    template_str_copy = template_str
+
+    for key, value in environment_html.items():
+        template_str_copy = template_str_copy.replace("{{my_{}}}".format(key), str(value))
+
     # Replace Jinja variables with actual values
-    template_str = template_str.format(**environment_html)
+    # template_str = template_str.format(**environment_html)
 
     print("******* SEND RESET PASSWORD EMAIL *******")
     print(link)
@@ -115,7 +120,7 @@ def send_reset_password_email(email_to: str, email: str, token: str) -> None:
     em['From'] = email_sender
     em['To'] = email_to
     em['Subject'] = subject
-    em.set_content(template_str, subtype='html')
+    em.set_content(template_str_copy, subtype='html')
 
     context = ssl.create_default_context()
 
