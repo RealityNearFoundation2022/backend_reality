@@ -41,7 +41,7 @@ class Asset(Base):
 class Coupon(Base):
     id = Column(Integer, primary_key=True, index=True)
     owner_id = Column(Integer, ForeignKey("user.id"), nullable=False)
-    category_id = Column(Integer, ForeignKey("couponcategory.id"), nullable=False)
+    category_id = Column(Integer, ForeignKey("couponcategory.id"), nullable=True)
     img = Column(String, nullable=True)
     name = Column(String)
     title = Column(String)

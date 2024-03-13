@@ -15,7 +15,6 @@ class Reward(Base):
     id = Column(Integer, primary_key=True, index=True)
     owner_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     description = Column(String)
-    # category_id = Column(Integer, ForeignKey("rewardcategory.id"), nullable=False)
     quantity = Column(Integer, default=0)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
