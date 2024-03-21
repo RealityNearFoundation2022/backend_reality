@@ -20,7 +20,7 @@ def create_reward(
     """
     Create new reward.
     """
-    reward = crud.reward.create_with_owner(db, obj_in=reward_in, owner_id=1)
+    reward = crud.reward.create_with_owner(db, obj_in=reward_in)
     return reward
 
 
